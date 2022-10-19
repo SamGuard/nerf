@@ -16,6 +16,17 @@ from load_blender import load_blender_data
 
 tf.compat.v1.enable_eager_execution()
 
+if not os.environ.get('OMP_NUM_THREADS'):
+    config = tf.ConfigProto(allow_soft_placement=True)
+    config.gpu_options.allow_growth=True
+else:
+    num_thread = int(os.environ.get('OMP_NUM_THREADS'))
+    config = tf.ConfigProto(intra_op_parallelism_threads=num_thread,
+                            allow_soft_placement=True)
+    config.gpu_options.allow_growth=True
+    
+tf.Session(config=config)
+
 
 def batchify(fn, chunk):
     """Constructs a version of 'fn' that applies to smaller batches."""
